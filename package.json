@@ -13,15 +13,18 @@
     "test": "pnpm -r test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "gen:types": "echo \"Stub for gen:types\""
+    "gen:types": "npx supabase gen types typescript --project-id pftpbfwqkprzxwpsyfxv > web/src/types/database.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@supabase/supabase-js": "^2.110.2",
+    "@types/jsonwebtoken": "^9.0.10",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.0",
     "globals": "^15.0.0",
     "jsdom": "^29.1.1",
+    "jsonwebtoken": "^9.0.3",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0",
