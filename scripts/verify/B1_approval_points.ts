@@ -68,13 +68,14 @@ async function run() {
     // Record starting points balance
     const startBalance = emp.points_balance ?? 0;
 
-    // Create participation (pending)
+    // Create participation (pending) with a proof URL to satisfy the evidence requirement
     const { data: part, error: partErr } = await sb.from('employee_participations')
       .insert({
         employee_id: emp.id,
         activity_id: activity.id,
         approval_status: 'pending',
         points_earned: 0,
+        proof_url: 'https://example.com/proof.png',
       }).select('id').single();
     if (partErr || !part) { fail('Could not create participation: ' + partErr?.message); process.exit(1); }
 
