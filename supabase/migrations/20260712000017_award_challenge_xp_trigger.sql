@@ -45,11 +45,12 @@ begin
   new.xp_awarded := v_challenge_xp;
 
   -- Create approval notification
-  insert into public.notifications (employee_id, type, payload)
-  values (
-    new.employee_id,
-    'approval_decision',
-    jsonb_build_object(
+  perform public.create_notification(
+    p_user    := new.employee_id,
+    p_type    := 'approval_decision',
+    p_title   := 'Challenge Approved',
+    p_body    := format('Your challenge submission has been approved. %s XP awarded.', v_challenge_xp),
+    p_payload := jsonb_build_object(
       'source', 'challenge_participation',
       'participation_id', new.id,
       'challenge_id', new.challenge_id,

@@ -1,0 +1,16 @@
+.git
+.github
+.env
+.env.*
+web/
+node_modules/
+prompts/
+docs/
+scripts/
+supabase/
+*.md
+.prettierrc
+eslint.config.mjs
+extract_types.mjs
+.firebaserc
+firebase.json

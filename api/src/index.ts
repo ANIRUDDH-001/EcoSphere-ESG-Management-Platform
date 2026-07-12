@@ -124,7 +124,8 @@ const port = parseInt(process.env.PORT || '8080', 10);
 if (process.env.NODE_ENV !== 'test') {
   serve({
     fetch: app.fetch,
-    port
+    port,
+    hostname: '0.0.0.0'
   }, (info) => {
     logger.info(`API running on http://localhost:${info.port}`);
   });

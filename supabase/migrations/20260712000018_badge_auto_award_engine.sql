@@ -18,11 +18,11 @@ declare
   v_gte integer;
   v_passes boolean;
 begin
-  -- Check feature toggle (badge_auto_award_enabled in esg_settings)
-  select coalesce((value::jsonb)::boolean, true)
+  -- Check feature toggle (badge_auto_award_enabled in esg_settings singleton, id=1)
+  select coalesce(badge_auto_award_enabled, true)
   into v_enabled
   from public.esg_settings
-  where key = 'badge_auto_award_enabled';
+  where id = 1;
 
   if not coalesce(v_enabled, true) then
     raise notice '[fn_evaluate_badges] badge_auto_award_enabled=false, skipping for employee %', p_employee;
@@ -82,11 +82,12 @@ begin
         raise notice '[fn_evaluate_badges] awarded badge "%" to employee %', v_badge.name, p_employee;
 
         -- Notify employee of badge unlock
-        insert into public.notifications (employee_id, type, payload)
-        values (
-          p_employee,
-          'badge_unlock',
-          jsonb_build_object(
+        perform public.create_notification(
+          p_user    := p_employee,
+          p_type    := 'badge_unlock',
+          p_title   := 'Badge Unlocked',
+          p_body    := format('You unlocked the "%s" badge.', v_badge.name),
+          p_payload := jsonb_build_object(
             'badge_id', v_badge.id,
             'badge_name', v_badge.name
           )
