@@ -12,3 +12,20 @@ export const policySchema = z.object({
 });
 
 export type PolicyFormValues = z.infer<typeof policySchema>;
+
+export const auditSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  department_id: z.string().min(1, 'Department is required'),
+  auditor_id: z.string().min(1, 'Auditor is required'),
+  scheduled_date: z.string().min(1, 'Scheduled date is required'),
+});
+
+export type AuditFormValues = z.infer<typeof auditSchema>;
+
+export const auditCompleteSchema = z.object({
+  result: z.enum(['pass', 'fail', 'partial']),
+  findings: z.string().optional(),
+  completed_date: z.string().min(1, 'Completed date is required'),
+});
+
+export type AuditCompleteFormValues = z.infer<typeof auditCompleteSchema>;

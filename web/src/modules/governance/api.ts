@@ -58,11 +58,6 @@ export const governanceApi = {
     return data as PolicyRow;
   },
 
-  listAudits: async () => {
-    // Stub
-    return [];
-  },
-
   listIssues: async () => {
     // Stub
     return [];
@@ -143,5 +138,51 @@ export const governanceApi = {
       total: s.total,
       acked: s.acked
     }));
+  },
+
+  listAudits: async () => {
+    const { data, error } = await supabaseClient
+      .from('audits')
+      .select('*, profiles!auditor_id(full_name), departments(name)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+
+  createAudit: async (audit: any) => {
+    const { data, error } = await supabaseClient
+      .from('audits')
+      .insert({ ...audit, status: 'open' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  updateAudit: async (id: string, audit: any) => {
+    const { data, error } = await supabaseClient
+      .from('audits')
+      .update(audit)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  completeAudit: async (id: string, completionData: { result: string; findings?: string; completed_date: string }) => {
+    const { data, error } = await supabaseClient
+      .from('audits')
+      .update({
+        status: 'completed',
+        result: completionData.result as any,
+        findings: completionData.findings,
+        completed_date: completionData.completed_date
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
 };

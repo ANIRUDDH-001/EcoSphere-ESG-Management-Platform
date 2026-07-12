@@ -79,3 +79,42 @@ export function useAckRates() {
     }
   });
 }
+
+export function useAudits() {
+  return useQuery({
+    queryKey: govKeys.audits,
+    queryFn: governanceApi.listAudits
+  });
+}
+
+export function useCreateAudit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: governanceApi.createAudit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: govKeys.audits });
+    }
+  });
+}
+
+export function useUpdateAudit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: any) => governanceApi.updateAudit(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: govKeys.audits });
+      queryClient.invalidateQueries({ queryKey: govKeys.audit(id) });
+    }
+  });
+}
+
+export function useCompleteAudit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => governanceApi.completeAudit(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: govKeys.audits });
+      queryClient.invalidateQueries({ queryKey: govKeys.audit(id) });
+    }
+  });
+}
