@@ -33,7 +33,7 @@ describe('LoginPage', () => {
     // Mock window.location
     const originalLocation = window.location;
     delete (window as any).location;
-    window.location = { ...originalLocation, href: '' };
+    window.location = { ...originalLocation, href: '' } as any;
 
     render(<LoginPage />);
 
@@ -45,6 +45,6 @@ describe('LoginPage', () => {
       expect(window.location.href).toBe('/');
     });
 
-    window.location = originalLocation;
+    window.location = originalLocation as any;
   });
 });

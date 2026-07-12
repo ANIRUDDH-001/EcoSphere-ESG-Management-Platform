@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthProvider, useAuth } from './useAuth';
 import { supabaseClient } from '../supabaseClient';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 vi.mock('../supabaseClient', () => ({
   supabaseClient: {

@@ -1,14 +1,15 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './lib/hooks/useAuth';
 import { queryClient } from './lib/queryClient';
-import { LoginPage } from './modules/auth/LoginPage';
+import { router } from './app/router';
 import './App.css';
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <LoginPage />
+        <RouterProvider router={router} />
       </AuthProvider>
     </QueryClientProvider>
   );
