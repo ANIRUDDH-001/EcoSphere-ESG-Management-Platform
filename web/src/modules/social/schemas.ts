@@ -23,10 +23,10 @@ export type CsrActivityFormValues = z.infer<typeof csrActivitySchema>;
 export const diversityMetricSchema = z.object({
   department_id: z.string().min(1, 'Department is required'),
   period: z.string().min(1, 'Period is required (e.g. 2024-Q1)'),
-  gender_ratio: z.coerce.number().min(0).max(1),
-  avg_tenure: z.coerce.number().min(0),
-  training_hours: z.coerce.number().min(0),
-  headcount: z.coerce.number().int().min(1),
+  gender_ratio: numberField(0, 1, 'Gender Ratio'),
+  avg_tenure: numberField(0, 100, 'Average Tenure'),
+  training_hours: numberField(0, 100000, 'Training Hours'),
+  headcount: numberField(1, 1000000, 'Headcount'),
 });
 
 export type DiversityMetricFormValues = z.infer<typeof diversityMetricSchema>;
@@ -34,8 +34,9 @@ export type DiversityMetricFormValues = z.infer<typeof diversityMetricSchema>;
 export const trainingCompletionSchema = z.object({
   employee_id: z.string().min(1, 'Employee is required'),
   course_name: z.string().min(1, 'Course name is required').max(200),
-  completion_pct: z.coerce.number().min(0).max(100),
+  completion_pct: numberField(0, 100, 'Completion percentage'),
   completed_at: z.string().min(1, 'Completion date is required'),
 });
 
 export type TrainingCompletionFormValues = z.infer<typeof trainingCompletionSchema>;
+
