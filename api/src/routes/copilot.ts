@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
-import { authMiddleware, getUserSupabase } from '../middleware/auth';
-import { checkUserLimit } from '../ai/usage';
-import { generate } from '../ai/router';
-import { checkGrounding, collectNumbers } from '../ai/guardrail';
-import { copilotTools, toolDeclarations } from '../ai/tools';
-import { UpstreamAiError } from '../errors';
+import { authMiddleware, getUserSupabase } from '../middleware/auth.js';
+import { checkUserLimit } from '../ai/usage.js';
+import { generate } from '../ai/router.js';
+import { checkGrounding, collectNumbers } from '../ai/guardrail.js';
+import { copilotTools, toolDeclarations } from '../ai/tools.js';
+import { UpstreamAiError } from '../errors.js';
 
 const copilot = new Hono<{ Variables: any }>();
 

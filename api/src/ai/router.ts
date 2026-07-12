@@ -1,10 +1,10 @@
-import { UpstreamAiError } from '../errors';
-import { logger } from '../lib/logger';
-import { COPILOT_POOL, SINGLE_SHOT_POOL, ModelSpec } from './models';
-import { recordUsage, modelUsageToday } from './usage';
-import { mockFixtures } from './fixtures';
-import { getConfig } from '../config';
-import { downstreamCall } from './downstream';
+import { UpstreamAiError } from '../errors.js';
+import { logger } from '../lib/logger.js';
+import { COPILOT_POOL, SINGLE_SHOT_POOL, ModelSpec } from './models.js';
+import { recordUsage, modelUsageToday } from './usage.js';
+import { mockFixtures } from './fixtures.js';
+import { getConfig } from '../config.js';
+import { downstreamCall } from './downstream.js';
 
 export type Pool = 'copilot' | 'single_shot';
 

@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { logger } from '../lib/logger';
+import { logger } from '../lib/logger.js';
 
 // ---------------------------------------------------------
 // Zod Schemas

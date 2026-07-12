@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
-import { emailRoutes } from './email';
+import { emailRoutes } from './email.js';
 
 describe('POST /email/send', () => {
   let app: Hono;

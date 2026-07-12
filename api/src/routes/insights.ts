@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
-import { authMiddleware, getUserSupabase } from '../middleware/auth';
-import { checkUserLimit } from '../ai/usage';
-import { generate } from '../ai/router';
-import { checkGrounding, collectNumbers } from '../ai/guardrail';
-import { buildScoreSnapshot } from '../ai/snapshot';
-import { UpstreamAiError } from '../errors';
+import { authMiddleware, getUserSupabase } from '../middleware/auth.js';
+import { checkUserLimit } from '../ai/usage.js';
+import { generate } from '../ai/router.js';
+import { checkGrounding, collectNumbers } from '../ai/guardrail.js';
+import { buildScoreSnapshot } from '../ai/snapshot.js';
+import { UpstreamAiError } from '../errors.js';
 import crypto from 'crypto';
 
 const insights = new Hono<{ Variables: any }>();

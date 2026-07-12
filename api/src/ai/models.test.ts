@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { COPILOT_POOL, SINGLE_SHOT_POOL, GEN_CONFIG } from './models';
+import { COPILOT_POOL, SINGLE_SHOT_POOL, GEN_CONFIG } from './models.js';
 
 describe('Model Pools', () => {
   it('should have non-empty pools', () => {

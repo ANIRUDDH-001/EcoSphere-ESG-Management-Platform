@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkUserLimit, recordUsage, modelUsageToday } from './usage';
+import { checkUserLimit, recordUsage, modelUsageToday } from './usage.js';
 
 vi.mock('../config', () => ({
   getConfig: vi.fn(() => ({

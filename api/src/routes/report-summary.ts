@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
-import { authMiddleware, getUserSupabase } from '../middleware/auth';
-import { checkUserLimit } from '../ai/usage';
-import { generate } from '../ai/router';
-import { checkGrounding, collectNumbers } from '../ai/guardrail';
-import { UpstreamAiError } from '../errors';
+import { authMiddleware, getUserSupabase } from '../middleware/auth.js';
+import { checkUserLimit } from '../ai/usage.js';
+import { generate } from '../ai/router.js';
+import { checkGrounding, collectNumbers } from '../ai/guardrail.js';
+import { UpstreamAiError } from '../errors.js';
 import crypto from 'crypto';
 
 const reportSummary = new Hono<{ Variables: any }>();

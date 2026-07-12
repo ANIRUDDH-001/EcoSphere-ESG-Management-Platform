@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkGrounding, collectNumbers } from './guardrail';
+import { checkGrounding, collectNumbers } from './guardrail.js';
 
 describe('AI Guardrail', () => {
   describe('collectNumbers', () => {

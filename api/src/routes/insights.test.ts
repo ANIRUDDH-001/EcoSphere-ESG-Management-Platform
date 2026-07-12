@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
-import insights from './insights';
-import * as usageModule from '../ai/usage';
-import * as routerModule from '../ai/router';
-import * as snapshotModule from '../ai/snapshot';
-import { UpstreamAiError } from '../errors';
+import insights from './insights.js';
+import * as usageModule from '../ai/usage.js';
+import * as routerModule from '../ai/router.js';
+import * as snapshotModule from '../ai/snapshot.js';
+import { UpstreamAiError } from '../errors.js';
 
 const mockDb = {
   from: vi.fn()

@@ -1,4 +1,4 @@
-import { GenerateResult } from './router';
+import { GenerateResult } from './router.js';
 
 export const mockFixtures: Record<'copilot' | 'insight' | 'summary', GenerateResult> = {
   copilot: {

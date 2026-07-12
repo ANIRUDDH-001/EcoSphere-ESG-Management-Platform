@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { copilotTools } from './tools';
+import { copilotTools } from './tools.js';
 
 const mockDb = {
   from: vi.fn()

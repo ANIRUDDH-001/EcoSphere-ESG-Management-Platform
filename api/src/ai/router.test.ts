@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { generate, GenerateArgs } from './router';
-import * as usageModule from './usage';
-import * as downstreamModule from './downstream';
-import * as configModule from '../config';
-import { UpstreamAiError } from '../errors';
+import { generate, GenerateArgs } from './router.js';
+import * as usageModule from './usage.js';
+import * as downstreamModule from './downstream.js';
+import * as configModule from '../config.js';
+import { UpstreamAiError } from '../errors.js';
 
 vi.mock('./usage', () => ({
   modelUsageToday: vi.fn(),

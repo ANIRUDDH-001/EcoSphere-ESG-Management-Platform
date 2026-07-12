@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { getConfig } from '../config';
-import { logger } from '../lib/logger';
+import { getConfig } from '../config.js';
+import { logger } from '../lib/logger.js';
 
 let supabase: ReturnType<typeof createClient> | null = null;
 function getSupabase() {

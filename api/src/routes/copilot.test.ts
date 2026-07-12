@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Hono } from 'hono';
-import copilot from './copilot';
-import * as usageModule from '../ai/usage';
-import * as routerModule from '../ai/router';
-import * as toolsModule from '../ai/tools';
-import { UpstreamAiError } from '../errors';
+import copilot from './copilot.js';
+import * as usageModule from '../ai/usage.js';
+import * as routerModule from '../ai/router.js';
+import * as toolsModule from '../ai/tools.js';
+import { UpstreamAiError } from '../errors.js';
 
 vi.mock('../middleware/auth', () => ({
   authMiddleware: async (c: any, next: any) => {
