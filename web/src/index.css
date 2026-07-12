@@ -93,3 +93,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes value-update {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  .animate-value-update {
+    animation: value-update 0.6s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-value-update {
+      animation: none;
+    }
+  }
+}

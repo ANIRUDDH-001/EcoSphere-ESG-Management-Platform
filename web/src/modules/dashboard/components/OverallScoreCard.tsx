@@ -36,7 +36,7 @@ export function OverallScoreCard({ score, trendData, isLoading }: OverallScoreCa
       
       <div className="mt-6 flex items-center justify-center h-8">
         {delta !== null ? (
-          <div className={`flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-sm ${
+          <div key={delta} className={`flex items-center gap-1.5 font-medium px-3 py-1 rounded-full text-sm animate-value-update ${
             delta > 0 ? 'bg-green-50 text-green-700' : 
             delta < 0 ? 'bg-red-50 text-red-700' : 
             'bg-slate-100 text-slate-700'

@@ -1,4 +1,8 @@
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDashboardData } from '../hooks';
+import { subscribeScores } from '../../../lib/hooks/scores';
+import { logger } from '../../../lib/logger';
 import { OverallScoreCard } from '../components/OverallScoreCard';
 import { PillarGauges } from '../components/PillarGauges';
 import { EsgTrendCard } from '../components/EsgTrendCard';
@@ -8,7 +12,23 @@ import { LeaderboardTeaser } from '../components/LeaderboardTeaser';
 import { AiInsightBanner } from '../components/AiInsightBanner';
 
 export function DashboardPage() {
+  const queryClient = useQueryClient();
   const { orgScore, trend, isLoading, isError } = useDashboardData();
+
+  useEffect(() => {
+    logger.debug('Dashboard: Subscribing to realtime score updates');
+    const unsubscribe = subscribeScores(() => {
+      logger.debug('Dashboard: Realtime score update received, invalidating queries');
+      queryClient.invalidateQueries({ queryKey: ['org_score'] });
+      queryClient.invalidateQueries({ queryKey: ['department_scores'] });
+      queryClient.invalidateQueries({ queryKey: ['score_trend'] });
+    });
+
+    return () => {
+      logger.debug('Dashboard: Unsubscribing from realtime score updates');
+      unsubscribe();
+    };
+  }, [queryClient]);
 
   if (isLoading) {
     return (

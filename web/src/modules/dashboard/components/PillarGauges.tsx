@@ -31,7 +31,7 @@ function MiniGauge({ value, colorVar, title }: { value: number, colorVar: string
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <text x="50%" y="70%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-foreground tabular-nums">
+            <text key={clamped} x="50%" y="70%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-foreground tabular-nums animate-value-update">
               {clamped}
             </text>
           </PieChart>
