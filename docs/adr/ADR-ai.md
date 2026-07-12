@@ -22,19 +22,17 @@ A post-validation guardrail will reject any output that introduces numbers not p
 To overcome the free-tier rate limits, we implement a multi-model router. The router tracks per-model RPM and RPD in the `ai_usage` table. It skips models that have hit their cap and backs off to the next model on `429` (Rate Limit) errors.
 
 ### COPILOT_POOL (Function-calling)
-- `gemini-3.1-flash-lite` (Primary)
-- `gemini-3.5-flash`
-- `gemini-3-flash`
-- `gemini-2.5-flash`
-- `gemini-2.5-flash-lite`
+- `gemini-3.1-flash-lite` (Primary, 15 RPM / 500 RPD)
+- `gemini-3.5-flash` (5 RPM / 20 RPD)
+- `gemini-3-flash` (5 RPM / 20 RPD)
+- `gemini-2.5-flash` (5 RPM / 20 RPD)
+- `gemini-2.5-flash-lite` (10 RPM / 20 RPD)
 
 ### SINGLE_SHOT_POOL (Insights & Summaries, no tools)
-- `gemma-4-31b` (Primary)
-- `gemma-4-26b`
+- `gemma-4-31b` (Primary, 15 RPM / 1.5K RPD)
+- `gemma-4-26b` (15 RPM / 1.5K RPD)
 
 **Why?** Most Flash models are capped at 20 RPD on the free tier. Using model pooling and Gemma for single-shot requests turns this demo-killing limit into ample headroom.
-
-*(Note: Exact model IDs need to be confirmed against the live Gemini console before wiring.)*
 
 ## 4. Rate Limiting & Caching
 - **Rate Limits:** Per-user limits (`AI_MINUTE_LIMIT` = 10, `AI_DAILY_LIMIT` = 150) are enforced *before* making any external API calls.
