@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { AppLayout } from './layout';
 import { RequireAuth, RequireRole } from './guards';
 import { LoginPage } from '../modules/auth/LoginPage';
+import { Gallery } from '../components/_gallery';
 
 // Module Route Registries
 import { dashboardRoutes } from '../modules/dashboard/routes';
@@ -20,6 +21,10 @@ export const routes = [
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+    path: '/_gallery',
+    element: <Gallery />
   },
   {
     path: '/',

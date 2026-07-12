@@ -3,7 +3,6 @@ import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './lib/hooks/useAuth';
 import { queryClient } from './lib/queryClient';
 import { router } from './app/router';
-import './App.css';
 
 function App() {
   return (
