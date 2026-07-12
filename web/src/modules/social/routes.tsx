@@ -1,9 +1,12 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { SocialDashboard } from './pages/SocialDashboard';
+import { CsrActivitiesPage } from './pages/CsrActivitiesPage';
+import { ParticipationPage } from './pages/ParticipationPage';
+import { DiversityPage } from './pages/DiversityPage';
 
 export const socialRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Social" /> },
-  { path: 'csr', element: <StubPage title="CSR" /> },
-  { path: 'participation', element: <StubPage title="Participation" /> },
-  { path: 'diversity', element: <StubPage title="Diversity" /> }
+  { index: true, element: <SocialDashboard /> },
+  { path: 'csr', element: <CsrActivitiesPage /> },
+  { path: 'participation', element: <ParticipationPage /> },
+  { path: 'diversity', element: <DiversityPage /> },
 ];
