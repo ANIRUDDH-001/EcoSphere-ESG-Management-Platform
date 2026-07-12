@@ -174,7 +174,7 @@ export const EmissionFactors = () => {
         </div>
 
         {isAdmin && (
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
             if (!open) {
               setEditingFactor(null);
               form.reset();
@@ -193,7 +193,7 @@ export const EmissionFactors = () => {
                   <Input id="name" {...form.register('name')} />
                 </FormField>
                 <FormField label="Source Type" id="source_type" error={form.formState.errors.source_type?.message}>
-                  <Select onValueChange={(v) => form.setValue('source_type', v as any)} defaultValue={form.getValues('source_type')}>
+                  <Select onValueChange={(v: string) => form.setValue('source_type', v as any)} defaultValue={form.getValues('source_type')}>
                     <SelectTrigger id="source_type"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="purchase">Purchase</SelectItem>

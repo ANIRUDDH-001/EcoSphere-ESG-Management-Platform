@@ -141,7 +141,7 @@ export const CarbonTransactions = () => {
       <div className="flex flex-wrap gap-3 items-end">
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground">Source Type</label>
-          <Select value={filter.source_type || 'all'} onValueChange={v => setFilter(f => ({ ...f, source_type: v === 'all' ? undefined : v }))}>
+          <Select value={filter.source_type || 'all'} onValueChange={(v: string) => setFilter(f => ({ ...f, source_type: v === 'all' ? undefined : v as any }))}>
             <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
@@ -161,7 +161,7 @@ export const CarbonTransactions = () => {
 
         {isManager && (
           <div className="ml-auto">
-            <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
               if (!open) { form.reset({ date: new Date().toISOString().slice(0, 10), source_type: 'manual', quantity: 0, emission_factor_id: '', department_id: '', note: '' }); setPreview(null); }
               setIsDialogOpen(open);
             }}>
@@ -180,7 +180,7 @@ export const CarbonTransactions = () => {
                     <Input id="department_id" {...form.register('department_id')} />
                   </FormField>
                   <FormField label="Source Type" id="source_type" error={form.formState.errors.source_type?.message}>
-                    <Select value={form.watch('source_type')} onValueChange={v => form.setValue('source_type', v as any)}>
+                    <Select value={form.watch('source_type')} onValueChange={(v: string) => form.setValue('source_type', v as any)}>
                       <SelectTrigger id="source_type"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {SOURCE_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
@@ -188,7 +188,7 @@ export const CarbonTransactions = () => {
                     </Select>
                   </FormField>
                   <FormField label="Emission Factor" id="emission_factor_id" error={form.formState.errors.emission_factor_id?.message}>
-                    <Select value={form.watch('emission_factor_id')} onValueChange={v => form.setValue('emission_factor_id', v)}>
+                    <Select value={form.watch('emission_factor_id')} onValueChange={(v: string) => form.setValue('emission_factor_id', v)}>
                       <SelectTrigger id="emission_factor_id"><SelectValue placeholder="Select factor…" /></SelectTrigger>
                       <SelectContent>
                         {filteredFactors.map((f: any) => (

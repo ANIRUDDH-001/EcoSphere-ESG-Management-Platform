@@ -120,7 +120,7 @@ export const ProductProfiles = () => {
         <div />
 
         {isAdmin && (
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
             if (!open) {
               setEditingProduct(null);
               form.reset();
@@ -148,7 +148,7 @@ export const ProductProfiles = () => {
                   <Input type="number" id="recyclable_pct" {...form.register('recyclable_pct', { valueAsNumber: true })} />
                 </FormField>
                 <FormField label="Linked Emission Factor" id="emission_factor_id" error={form.formState.errors.emission_factor_id?.message}>
-                  <Select onValueChange={(v) => form.setValue('emission_factor_id', v)} defaultValue={form.getValues('emission_factor_id') || 'none'}>
+                  <Select onValueChange={(v: string) => form.setValue('emission_factor_id', v === 'none' ? undefined : v as any)} defaultValue={form.getValues('emission_factor_id') || 'none'}>
                     <SelectTrigger id="emission_factor_id"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">None</SelectItem>

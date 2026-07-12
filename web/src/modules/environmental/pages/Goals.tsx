@@ -160,7 +160,7 @@ export const Goals = () => {
         </div>
 
         {isAdmin && (
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
             if (!open) {
               setEditingGoal(null);
               form.reset();
