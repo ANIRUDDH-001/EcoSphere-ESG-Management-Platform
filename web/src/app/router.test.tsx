@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ReactElement } from 'react';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
@@ -29,7 +30,7 @@ vi.mock('../modules/dashboard/hooks', () => ({
 
 describe('App Router', () => {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  const wrap = (el: JSX.Element) => <QueryClientProvider client={queryClient}>{el}</QueryClientProvider>;
+  const wrap = (el: ReactElement) => <QueryClientProvider client={queryClient}>{el}</QueryClientProvider>;
 
   afterEach(() => {
     cleanup();
