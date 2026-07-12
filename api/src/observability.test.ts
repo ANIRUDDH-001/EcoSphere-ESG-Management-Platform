@@ -19,7 +19,7 @@ test('middleware attaches request-id and logs latency', async () => {
   expect(res.headers.get('x-request-id')).toBeTruthy();
 
   const snap = metrics.snapshot();
-  expect(snap['http_requests_total']['route=/test,status=200']).toBe(1);
+  expect(snap['http_requests_total']?.['route=/test,status=200']).toBe(1);
 });
 
 test('middleware uses existing x-request-id', async () => {

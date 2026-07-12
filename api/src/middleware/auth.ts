@@ -18,6 +18,8 @@ export const authMiddleware = async (c: Context, next: Next) => {
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token) throw new AuthError('Missing token');
+
   try {
     const secret = new TextEncoder().encode(JWT_SECRET);
     const { payload } = await jose.jwtVerify(token, secret);
@@ -25,7 +27,8 @@ export const authMiddleware = async (c: Context, next: Next) => {
     c.set('userId', payload.sub);
     c.set('role', payload.role);
     c.set('token', token);
-  } catch (error) {
+  } catch (error: any) {
+    console.error('JWT VERIFY FAILED:', error);
     throw new AuthError('Invalid token');
   }
   
