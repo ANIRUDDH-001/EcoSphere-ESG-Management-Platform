@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { authMiddleware, getUserSupabase } from './middleware/auth.js';
 import { observabilityMiddleware } from './middleware/observability.js';
 import { AuthError, RateLimitError, ValidationError, UpstreamAiError } from './errors.js';
+import { emailRoutes } from './routes/email.js';
 import { logger } from './lib/logger.js';
 
 const app = new Hono<{
@@ -54,13 +55,16 @@ app.get('/health', (c) => {
   return c.json({ status: 'ok' });
 });
 
+// In-memory metrics
+const metricsStore: Record<string, number> = {};
+
 // Guarded Metrics (Internal token or admin)
 app.get('/metrics', async (c) => {
   const authHeader = c.req.header('Authorization');
   const internalToken = process.env.INTERNAL_METRICS_TOKEN || 'dev-metrics-token';
   
   if (authHeader === `Bearer ${internalToken}`) {
-    return c.json({ metrics: 'placeholder' });
+    return c.json({ metrics: metricsStore });
   }
   
   let role = null;
@@ -76,8 +80,25 @@ app.get('/metrics', async (c) => {
     throw new AuthError('Metrics requires admin role');
   }
 
-  return c.json({ metrics: 'placeholder' });
+  return c.json({ metrics: metricsStore });
 });
+
+app.post('/metrics/increment', async (c) => {
+  const authHeader = c.req.header('Authorization');
+  const internalToken = process.env.INTERNAL_METRICS_TOKEN || 'dev-metrics-token';
+  
+  if (authHeader !== `Bearer ${internalToken}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  const key = c.req.query('key');
+  if (key) {
+    metricsStore[key] = (metricsStore[key] || 0) + 1;
+  }
+  return c.json({ success: true });
+});
+
+// Register routes
+app.route('/email', emailRoutes);
 
 // Protected /me route
 app.get('/me', authMiddleware, (c) => {
