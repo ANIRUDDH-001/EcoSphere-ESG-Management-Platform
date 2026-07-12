@@ -38,6 +38,16 @@ export async function generate(args: GenerateArgs): Promise<GenerateResult> {
       if (last?.role === 'tool' && Array.isArray(last.content) && last.content[0]?.result?.overall !== undefined) {
         return { text: `The overall score is ${last.content[0].result.overall}.`, modelUsed: 'mock-copilot', attempts: 1, mock: true };
       }
+    } else if (args.kind === 'insight') {
+      return {
+        text: JSON.stringify({
+          summary: 'The overall ESG score is 80.',
+          recommendations: ['Resolve 5 overdue issues.']
+        }),
+        modelUsed: 'mock-single-shot',
+        attempts: 1,
+        mock: true
+      };
     }
     return mockFixtures[args.kind];
   }

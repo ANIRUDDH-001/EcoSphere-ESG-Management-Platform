@@ -6,6 +6,7 @@ import { observabilityMiddleware } from './middleware/observability.js';
 import { AuthError, RateLimitError, ValidationError, UpstreamAiError } from './errors.js';
 import { logger } from './lib/logger.js';
 import copilot from './routes/copilot.js';
+import insights from './routes/insights.js';
 
 const app = new Hono<{
   Variables: {
@@ -22,6 +23,9 @@ app.use('*', observabilityMiddleware);
 
 // Copilot
 app.route('/copilot', copilot);
+
+// Insights
+app.route('/insights', insights);
 
 // CORS
 const webOrigin = process.env.WEB_ORIGIN || 'http://localhost:5173';
