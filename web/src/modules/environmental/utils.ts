@@ -1,3 +1,5 @@
+import { goalProgressPct as libGoalProgressPct } from '../../lib/emissions';
+
 export function computeGoalStatus(goal: { baseline: number; target: number; current_value: number; target_date: string }) {
   const isReduction = goal.target < goal.baseline;
   let achieved = false;
@@ -23,19 +25,5 @@ export function computeGoalStatus(goal: { baseline: number; target: number; curr
 }
 
 export function goalProgressPct(goal: { baseline: number; target: number; current_value: number }) {
-  if (goal.target === goal.baseline) {
-    return goal.current_value === goal.target ? 100 : 0;
-  }
-
-  const isReduction = goal.target < goal.baseline;
-  let progress = 0;
-  if (isReduction) {
-    progress = ((goal.baseline - goal.current_value) / (goal.baseline - goal.target)) * 100;
-  } else {
-    progress = ((goal.current_value - goal.baseline) / (goal.target - goal.baseline)) * 100;
-  }
-  
-  if (progress < 0) return 0;
-  if (progress > 100) return 100;
-  return progress;
+  return libGoalProgressPct(goal.baseline, goal.target, goal.current_value);
 }
