@@ -5,6 +5,7 @@ import { authMiddleware, getUserSupabase } from './middleware/auth.js';
 import { observabilityMiddleware } from './middleware/observability.js';
 import { AuthError, RateLimitError, ValidationError, UpstreamAiError } from './errors.js';
 import { logger } from './lib/logger.js';
+import copilot from './routes/copilot.js';
 
 const app = new Hono<{
   Variables: {
@@ -18,6 +19,9 @@ const app = new Hono<{
 
 // Observability
 app.use('*', observabilityMiddleware);
+
+// Copilot
+app.route('/copilot', copilot);
 
 // CORS
 const webOrigin = process.env.WEB_ORIGIN || 'http://localhost:5173';

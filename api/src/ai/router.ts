@@ -30,6 +30,15 @@ export async function generate(args: GenerateArgs): Promise<GenerateResult> {
 
   if (config.MOCK_AI) {
     logger.info({ kind: args.kind, mock: true }, 'Returning MOCK_AI fixture');
+    if (args.kind === 'copilot') {
+      const last = args.messages[args.messages.length - 1] as any;
+      if (last?.role === 'user' && last.content?.toLowerCase().includes('score')) {
+        return { text: '', toolCalls: [{ id: 'call_1', name: 'get_org_score', args: {} }], modelUsed: 'mock-copilot', attempts: 1, mock: true };
+      }
+      if (last?.role === 'tool' && Array.isArray(last.content) && last.content[0]?.result?.overall !== undefined) {
+        return { text: `The overall score is ${last.content[0].result.overall}.`, modelUsed: 'mock-copilot', attempts: 1, mock: true };
+      }
+    }
     return mockFixtures[args.kind];
   }
 
