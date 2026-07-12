@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { authMiddleware, getUserSupabase } from '../middleware/auth';
 import { checkUserLimit } from '../ai/usage';
 import { generate } from '../ai/router';
+import { checkGrounding, collectNumbers } from '../ai/guardrail';
 import { UpstreamAiError } from '../errors';
 import crypto from 'crypto';
 
@@ -21,9 +22,13 @@ function buildFallbackTemplate(payload: any) {
   return `${payload.title} shows ${m1} at ${metrics[m1]} and ${m2} at ${metrics[m2]}.`;
 }
 
-function checkGuardrail(text: string, payload: any) {
-  // a4_08 placeholder
-  return true;
+function checkGuardrail(text: string, payload: any, reqLogger: any) {
+  const allowed = collectNumbers(payload);
+  const grounding = checkGrounding(text, allowed);
+  if (!grounding.grounded) {
+    reqLogger.warn({ offending: grounding.offending }, 'Guardrail rejected output');
+  }
+  return grounding.grounded;
 }
 
 reportSummary.post('/', authMiddleware, async (c) => {
@@ -82,7 +87,7 @@ reportSummary.post('/', authMiddleware, async (c) => {
   }
 
   if (!fallback) {
-    const grounded = checkGuardrail(finalSummary, payload);
+    const grounded = checkGuardrail(finalSummary, payload, reqLogger);
     if (!grounded) fallback = true;
   }
 

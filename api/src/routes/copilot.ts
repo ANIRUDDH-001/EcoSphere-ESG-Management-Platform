@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { authMiddleware, getUserSupabase } from '../middleware/auth';
 import { checkUserLimit } from '../ai/usage';
 import { generate } from '../ai/router';
+import { checkGrounding, collectNumbers } from '../ai/guardrail';
 import { copilotTools, toolDeclarations } from '../ai/tools';
 import { UpstreamAiError } from '../errors';
 
@@ -16,9 +17,13 @@ function buildFallbackAnswer(messages: any[]) {
   return "I'm sorry, I couldn't process that request at this time.";
 }
 
-function checkGuardrail(text: string, messages: any[]) {
-  // a4_08 placeholder
-  return true;
+function checkGuardrail(text: string, messages: any[], reqLogger: any) {
+  const allowed = collectNumbers(messages);
+  const grounding = checkGrounding(text, allowed);
+  if (!grounding.grounded) {
+    reqLogger.warn({ offending: grounding.offending }, 'Guardrail rejected output');
+  }
+  return grounding.grounded;
 }
 
 copilot.post('/', authMiddleware, async (c) => {
@@ -105,7 +110,7 @@ copilot.post('/', authMiddleware, async (c) => {
     fallback = true;
   }
   
-  const grounded = checkGuardrail(finalAnswer, messages);
+  const grounded = checkGuardrail(finalAnswer, messages, reqLogger);
   if (!grounded) {
     finalAnswer = buildFallbackAnswer(messages);
     fallback = true;
