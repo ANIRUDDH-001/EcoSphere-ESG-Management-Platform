@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { emissionFactorSchema, productProfileSchema } from './schemas';
+import { emissionFactorSchema, productProfileSchema, goalSchema } from './schemas';
 
 describe('emissionFactorSchema', () => {
   it('accepts valid factor', () => {
@@ -75,6 +75,30 @@ describe('productProfileSchema', () => {
       product_name: 'Product A',
       carbon_per_unit: -1,
       recyclable_pct: 100
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('goalSchema', () => {
+  it('validates numeric coherence', () => {
+    // Valid: target different from baseline
+    let result = goalSchema.safeParse({
+      name: 'Reduce water',
+      metric: 'L',
+      baseline: 100,
+      target: 60,
+      target_date: '2030-01-01'
+    });
+    expect(result.success).toBe(true);
+
+    // Invalid: target equals baseline
+    result = goalSchema.safeParse({
+      name: 'Reduce water',
+      metric: 'L',
+      baseline: 100,
+      target: 100,
+      target_date: '2030-01-01'
     });
     expect(result.success).toBe(false);
   });

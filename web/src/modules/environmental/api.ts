@@ -1,6 +1,7 @@
 import { supabaseClient } from '../../lib/supabaseClient';
 import type { Database } from '../../types/database';
 import type { EmissionFactorFormValues } from './schemas';
+import { computeGoalStatus } from './utils';
 
 type EmissionFactorRow = Database['public']['Tables']['emission_factors']['Row'];
 
@@ -102,5 +103,70 @@ export const environmentalApi = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  listGoals: async () => {
+    const { data, error } = await supabaseClient
+      .from('environmental_goals')
+      .select(`*, departments(name)`);
+    if (error) throw error;
+    return data;
+  },
+
+  createGoal: async (input: Database['public']['Tables']['environmental_goals']['Insert']) => {
+    const { data, error } = await supabaseClient
+      .from('environmental_goals')
+      .insert(input)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  updateGoal: async (id: string, input: Database['public']['Tables']['environmental_goals']['Update']) => {
+    const { data, error } = await supabaseClient
+      .from('environmental_goals')
+      .update(input)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  deleteGoal: async (id: string) => {
+    const { error } = await supabaseClient
+      .from('environmental_goals')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  recomputeGoalStatus: async (id: string) => {
+    const { data: goal, error: fetchError } = await supabaseClient
+      .from('environmental_goals')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (fetchError) throw fetchError;
+
+    const newStatus = computeGoalStatus({
+      baseline: goal.baseline || 0,
+      target: goal.target || 0,
+      current_value: goal.current_value || 0,
+      target_date: goal.target_date || ''
+    });
+
+    if (newStatus !== goal.status) {
+      const { data, error } = await supabaseClient
+        .from('environmental_goals')
+        .update({ status: newStatus as any })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    }
+    return goal;
   }
 };

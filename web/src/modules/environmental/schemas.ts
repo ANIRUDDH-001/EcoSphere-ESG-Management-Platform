@@ -27,3 +27,18 @@ export const productProfileSchema = z.object({
 });
 
 export type ProductProfileFormValues = z.infer<typeof productProfileSchema>;
+
+export const goalSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  department_id: z.string().nullable().optional(),
+  metric: z.string().min(1, 'Metric is required'),
+  baseline: z.number(),
+  target: z.number(),
+  target_date: z.string().min(1, 'Target date is required'),
+  current_value: z.number().default(0)
+}).refine(data => data.baseline !== data.target, {
+  message: "Target must be different from baseline",
+  path: ["target"]
+});
+
+export type GoalFormValues = z.input<typeof goalSchema>;

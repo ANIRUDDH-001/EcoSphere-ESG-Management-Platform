@@ -77,3 +77,39 @@ export const useDeleteProduct = () => {
     }
   });
 };
+export const useGoals = () => {
+  return useQuery({
+    queryKey: envKeys.goals,
+    queryFn: () => environmentalApi.listGoals()
+  });
+};
+
+export const useCreateGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: any) => environmentalApi.createGoal(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: envKeys.goals });
+    }
+  });
+};
+
+export const useUpdateGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: any }) => environmentalApi.updateGoal(id, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: envKeys.goals });
+    }
+  });
+};
+
+export const useDeleteGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => environmentalApi.deleteGoal(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: envKeys.goals });
+    }
+  });
+};
