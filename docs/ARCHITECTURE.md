@@ -262,7 +262,7 @@ prompts/             phase prompt files
 
 ## 10. Environment variables (names are binding)
 
-**web/ (Vercel)** — public only: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL`.
+**web/ (Firebase Hosting)** — public only: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL`.
 **api/ (Cloud Run)** — secret: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`,
 `GEMINI_API_KEY`, `RESEND_API_KEY`, `MOCK_AI` (`true`/`false`), `AI_DAILY_LIMIT`, `AI_MINUTE_LIMIT`.
 **The human injects these before a phase runs. Never commit or fabricate them.**
