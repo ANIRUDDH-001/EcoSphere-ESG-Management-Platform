@@ -1,2 +1,12 @@
-docs/
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.claude/
 prompts/
+scratchpad/
+*.log
+coverage/
+.DS_Store
+.vscode/
