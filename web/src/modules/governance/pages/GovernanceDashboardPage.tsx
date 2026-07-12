@@ -84,7 +84,7 @@ export function GovernanceDashboardPage() {
                     </Badge>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Due: {new Date(issue.due_date).toLocaleDateString()}
+                    Due: {new Date(issue.due_date as string).toLocaleDateString()}
                   </div>
                 </div>
               ))}

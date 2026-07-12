@@ -295,7 +295,7 @@ export const governanceApi = {
 
     const topOverdueIssues = openIssues
       .filter(i => i.is_overdue)
-      .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+      .sort((a, b) => new Date(a.due_date as string).getTime() - new Date(b.due_date as string).getTime())
       .slice(0, 5);
 
     return {
