@@ -29,3 +29,20 @@ export const auditCompleteSchema = z.object({
 });
 
 export type AuditCompleteFormValues = z.infer<typeof auditCompleteSchema>;
+
+export const issueSchema = z.object({
+  audit_id: z.string().optional().nullable(),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  description: z.string().min(1, 'Description is required'),
+  owner_id: z.string().min(1, 'Owner is required'),
+  due_date: z.string().min(1, 'Due date is required'),
+});
+
+export type IssueFormValues = z.infer<typeof issueSchema>;
+
+export const ISSUE_TRANSITIONS: Record<string, string[]> = {
+  open: ['in_progress', 'closed'],
+  in_progress: ['resolved', 'closed'],
+  resolved: ['closed'],
+  closed: ['open'], // typically issues can be reopened
+};

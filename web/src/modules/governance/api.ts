@@ -58,10 +58,6 @@ export const governanceApi = {
     return data as PolicyRow;
   },
 
-  listIssues: async () => {
-    // Stub
-    return [];
-  },
 
   myPendingAcks: async (userId: string) => {
     const { data, error } = await supabaseClient
@@ -182,6 +178,80 @@ export const governanceApi = {
       .eq('id', id)
       .select()
       .single();
+    if (error) throw error;
+
+    return data;
+  },
+
+  listIssues: async (filter?: { status?: string; severity?: string; is_overdue?: boolean }) => {
+    let q = supabaseClient.from('compliance_issues').select(`
+      *,
+      profiles:owner_id (full_name),
+      audits:audit_id (title)
+    `).order('created_at', { ascending: false });
+
+    if (filter?.status && filter.status !== 'all') {
+      q = q.eq('status', filter.status as any);
+    }
+    if (filter?.severity && filter.severity !== 'all') {
+      q = q.eq('severity', filter.severity as any);
+    }
+    if (filter?.is_overdue !== undefined) {
+      q = q.eq('is_overdue', filter.is_overdue);
+    }
+
+    const { data, error } = await q;
+    if (error) throw error;
+    return data;
+  },
+
+  getIssue: async (id: string) => {
+    const { data, error } = await supabaseClient
+      .from('compliance_issues')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  createIssue: async (issue: any) => {
+    const { data, error } = await supabaseClient
+      .from('compliance_issues')
+      .insert({ ...issue, status: 'open' })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    // notify owner
+    if (data.owner_id) {
+      await supabaseClient.rpc('create_notification', {
+        p_user: data.owner_id,
+        p_type: 'compliance_issue',
+        p_title: `New compliance issue assigned`,
+        p_body: `You have been assigned a new ${data.severity} severity compliance issue.`,
+        p_payload: { issue_id: data.id }
+      });
+    }
+
+    return data;
+  },
+
+  updateIssueStatus: async (id: string, status: string, currentStatus: string) => {
+    const { ISSUE_TRANSITIONS } = await import('./schemas');
+    const allowed = ISSUE_TRANSITIONS[currentStatus] || [];
+    if (!allowed.includes(status)) {
+      throw new Error(`Illegal transition from ${currentStatus} to ${status}`);
+    }
+
+    const { data, error } = await supabaseClient
+      .from('compliance_issues')
+      .update({ status: status as any })
+      .eq('id', id)
+      .select()
+      .single();
+    
     if (error) throw error;
     return data;
   }

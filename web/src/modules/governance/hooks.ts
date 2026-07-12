@@ -118,3 +118,31 @@ export function useCompleteAudit() {
     }
   });
 }
+
+export function useIssues(filter?: { status?: string; severity?: string; is_overdue?: boolean }) {
+  return useQuery({
+    queryKey: [...govKeys.issues, filter],
+    queryFn: () => governanceApi.listIssues(filter)
+  });
+}
+
+export function useCreateIssue() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (issue: any) => governanceApi.createIssue(issue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: govKeys.issues });
+    }
+  });
+}
+
+export function useUpdateIssueStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status, currentStatus }: { id: string; status: string; currentStatus: string }) => 
+      governanceApi.updateIssueStatus(id, status, currentStatus),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: govKeys.issues });
+    }
+  });
+}

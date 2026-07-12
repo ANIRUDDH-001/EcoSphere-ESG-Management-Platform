@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { policySchema, auditSchema, auditCompleteSchema } from './schemas';
+import { policySchema, auditSchema, auditCompleteSchema, issueSchema } from './schemas';
 
 describe('policySchema', () => {
   it('requires pillar and effective_date', () => {
@@ -50,5 +50,29 @@ describe('auditCompleteSchema', () => {
 
     const invalidEnum = { result: 'unknown', completed_date: '2023-01-02' };
     expect(auditCompleteSchema.safeParse(invalidEnum).success).toBe(false);
+  });
+});
+
+describe('issueSchema', () => {
+  it('validates a correct issue', () => {
+    const result = issueSchema.safeParse({
+      severity: 'high',
+      description: 'Test issue',
+      owner_id: 'user1',
+      due_date: '2023-12-31',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects missing owner or due_date', () => {
+    const result = issueSchema.safeParse({
+      severity: 'high',
+      description: 'Test issue',
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((e: any) => e.path.includes('owner_id'))).toBe(true);
+      expect(result.error.issues.some((e: any) => e.path.includes('due_date'))).toBe(true);
+    }
   });
 });
