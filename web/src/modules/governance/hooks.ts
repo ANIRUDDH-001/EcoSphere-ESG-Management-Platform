@@ -146,3 +146,9 @@ export function useUpdateIssueStatus() {
     }
   });
 }
+export function useGovDashboard() {
+  return useQuery({
+    queryKey: [...govKeys.all, 'dashboard-stats'],
+    queryFn: () => governanceApi.getDashboardStats()
+  });
+}

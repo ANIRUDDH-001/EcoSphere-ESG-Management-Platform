@@ -254,5 +254,57 @@ export const governanceApi = {
     
     if (error) throw error;
     return data;
+  },
+
+  getDashboardStats: async () => {
+    // 1. Acknowledgement Rate
+    const { data: acks, error: ackErr } = await supabaseClient
+      .from('policy_acknowledgements')
+      .select('status');
+    if (ackErr) throw ackErr;
+    const totalAcks = acks.length;
+    const completedAcks = acks.filter(a => a.status === 'acknowledged').length;
+    const ackRate = totalAcks > 0 ? (completedAcks / totalAcks) * 100 : 100;
+
+    // 2. Audit Pass Rate
+    const { data: audits, error: auditErr } = await supabaseClient
+      .from('audits')
+      .select('result')
+      .eq('status', 'completed');
+    if (auditErr) throw auditErr;
+    const totalAudits = audits.length;
+    const passedAudits = audits.filter(a => a.result === 'pass').length;
+    const passRate = totalAudits > 0 ? (passedAudits / totalAudits) * 100 : 100;
+
+    // 3. Issues Stats
+    const { data: issues, error: issuesErr } = await supabaseClient
+      .from('compliance_issues')
+      .select('*');
+    if (issuesErr) throw issuesErr;
+    
+    const openIssues = issues.filter(i => i.status === 'open');
+    const overdueCount = openIssues.filter(i => i.is_overdue).length;
+    const openCount = openIssues.length;
+    
+    const severityBreakdown = {
+      low: openIssues.filter(i => i.severity === 'low').length,
+      medium: openIssues.filter(i => i.severity === 'medium').length,
+      high: openIssues.filter(i => i.severity === 'high').length,
+      critical: openIssues.filter(i => i.severity === 'critical').length,
+    };
+
+    const topOverdueIssues = openIssues
+      .filter(i => i.is_overdue)
+      .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
+      .slice(0, 5);
+
+    return {
+      ackRate,
+      passRate,
+      openCount,
+      overdueCount,
+      severityBreakdown,
+      topOverdueIssues
+    };
   }
 };
