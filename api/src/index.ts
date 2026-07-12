@@ -7,6 +7,7 @@ import { AuthError, RateLimitError, ValidationError, UpstreamAiError } from './e
 import { logger } from './lib/logger.js';
 import copilot from './routes/copilot.js';
 import insights from './routes/insights.js';
+import reportSummary from './routes/report-summary.js';
 
 const app = new Hono<{
   Variables: {
@@ -26,6 +27,9 @@ app.route('/copilot', copilot);
 
 // Insights
 app.route('/insights', insights);
+
+// Report Summary
+app.route('/report-summary', reportSummary);
 
 // CORS
 const webOrigin = process.env.WEB_ORIGIN || 'http://localhost:5173';

@@ -38,3 +38,28 @@ export function useScoreTrend(days: number): {
 // Returns the unsubscribe teardown function.
 export function subscribeScores(onChange: () => void): () => void;
 ```
+
+## Report exec-summary (A4→B4)
+
+The executive summary generator exposed by Track A (AI endpoints) for report consumption by Track B4.
+
+**Endpoint**: `POST /report-summary`
+
+### Request Payload
+```ts
+{ 
+  title: string, 
+  period: string, 
+  metrics: Record<string, number|string>, 
+  highlights?: string[] 
+}
+```
+
+### Response Shape
+```ts
+{ 
+  summary: string, 
+  cached: boolean, 
+  fallback: boolean 
+}
+```

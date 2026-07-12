@@ -48,6 +48,15 @@ export async function generate(args: GenerateArgs): Promise<GenerateResult> {
         attempts: 1,
         mock: true
       };
+    } else if (args.kind === 'summary') {
+      return {
+        text: JSON.stringify({
+          summary: 'The Q3 Sustainability report shows excellent progress.'
+        }),
+        modelUsed: 'mock-single-shot',
+        attempts: 1,
+        mock: true
+      };
     }
     return mockFixtures[args.kind];
   }
