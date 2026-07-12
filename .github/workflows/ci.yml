@@ -48,3 +48,6 @@ jobs:
 
       - name: Test
         run: pnpm -r test
+        
+      - name: Emoji Scan
+        run: npx tsx scripts/verify/no_emoji.ts

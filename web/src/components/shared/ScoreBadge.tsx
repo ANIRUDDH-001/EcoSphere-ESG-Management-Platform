@@ -1,20 +1,18 @@
 import { Badge } from "@/components/ui/badge";
+import { scoreBand } from "@/lib/scoreBand";
 
 export function ScoreBadge({ score, className }: { score: number, className?: string }) {
-  let band = "poor";
-  if (score >= 80) band = "excellent";
-  else if (score >= 60) band = "good";
-  else if (score >= 40) band = "average";
+  const band = scoreBand(score);
 
   const variants: Record<string, string> = {
-    excellent: "bg-[hsl(var(--score-excellent))] text-primary-foreground",
-    good: "bg-[hsl(var(--score-good))] text-primary-foreground",
-    average: "bg-[hsl(var(--score-average))] text-primary-foreground",
-    poor: "bg-[hsl(var(--score-poor))] text-destructive-foreground"
+    strong: "bg-primary text-primary-foreground hover:bg-primary",
+    good: "bg-[hsl(var(--pillar-environmental))] text-primary-foreground hover:bg-[hsl(var(--pillar-environmental))]",
+    warning: "bg-warning text-primary-foreground hover:bg-warning",
+    danger: "bg-danger text-destructive-foreground hover:bg-danger"
   };
 
   return (
-    <Badge className={`${variants[band]} ${className || ''} hover:${variants[band]}`}>
+    <Badge className={`${variants[band]} ${className || ''} tabular-nums`}>
       {score}
     </Badge>
   );

@@ -12,7 +12,7 @@ export function RankBar({ data, dataKey, xAxisKey }: { data: any[], dataKey: str
         />
         <Bar dataKey={dataKey} radius={[0, 4, 4, 0]}>
           {data.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={`hsl(var(--primary))`}/>
+            <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 6) + 1}))`}/>
           ))}
         </Bar>
       </BarChart>

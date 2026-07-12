@@ -11,7 +11,7 @@ export function StatTile({ title, value, icon, description }: { title: string, v
         {icon && <div className="text-muted-foreground">{icon}</div>}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold tabular-nums">{value}</div>
         {description && (
           <p className="text-xs text-muted-foreground mt-1">
             {description}

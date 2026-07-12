@@ -1,12 +1,10 @@
 import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { scoreBandColor } from "@/lib/scoreBand";
 
 export function Gauge({ value }: { value: number }) {
   const clamped = Math.max(0, Math.min(100, value));
   
-  let color = "hsl(var(--score-poor))";
-  if (clamped >= 80) color = "hsl(var(--score-excellent))";
-  else if (clamped >= 60) color = "hsl(var(--score-good))";
-  else if (clamped >= 40) color = "hsl(var(--score-average))";
+  const color = scoreBandColor(clamped);
 
   const data = [
     { name: "Score", value: clamped, color },
@@ -31,7 +29,7 @@ export function Gauge({ value }: { value: number }) {
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
         </Pie>
-        <text x="50%" y="70%" textAnchor="middle" dominantBaseline="middle" className="text-3xl font-bold fill-foreground">
+        <text x="50%" y="70%" textAnchor="middle" dominantBaseline="middle" className="text-3xl font-bold fill-foreground tabular-nums">
           {clamped}
         </text>
       </PieChart>

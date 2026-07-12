@@ -11,7 +11,7 @@ Repo: `EcoSphere-ESG-Management-Platform` · Single branch: `main` · Team: Lead
 
 | Layer | Choice | Deploys to |
 |---|---|---|
-| Frontend | React 18 + Vite + TypeScript, React Router v6, TanStack Query, shadcn/ui + Tailwind, Recharts, React Hook Form + Zod | **Vercel** (`web/`) |
+| Frontend | React 18 + Vite + TypeScript, React Router v6, TanStack Query, shadcn/ui + Tailwind, Recharts, React Hook Form + Zod | **Firebase Hosting** (`web/`) |
 | Backend service | **Node + Hono + TypeScript** — Gemini model-router, email (Resend), AI-assisted exports | **Cloud Run** (`api/`) |
 | Data plane | **Supabase**: Postgres + RLS + Auth + Storage + triggers + `pg_cron`/`pg_net` | Supabase project |
 | AI | **Gemini** (multi-model router) + **Gemma** (single-shot), function-calling copilot | via `api/` |
@@ -20,8 +20,12 @@ Repo: `EcoSphere-ESG-Management-Platform` · Single branch: `main` · Team: Lead
 **Data flow:** `web` → Supabase (`supabase-js`, user JWT, RLS) for **all CRUD**; `web` → `api`
 (Cloud Run, user JWT) for **AI / email / AI-summary exports** only. No custom CRUD server.
 
-**Deploy / push-to-prod:** push to `main` → Vercel builds `web/`, Cloud Build deploys `api/`,
-Supabase migrations applied via `supabase db push` (or MCP `apply_migration`). Trunk-based.
+**Deploy / push-to-prod (agent-driven):** the implementing agent has **terminal access to Google Cloud
+(Cloud Run) and Firebase** and to the **Supabase MCP** — so it can go from project creation to live
+deploy itself: `firebase deploy` (or `firebase hosting`) for `web/`, `gcloud run deploy` for `api/`,
+and `apply_migration` / `supabase db push` for the data plane. All three hosts are cloud-managed; no
+local server in prod. Trunk-based: everything lands on `main` before the final deploy. Secrets live only
+in Cloud Run env (see §10) — never in the web bundle or the repo.
 
 ---
 
@@ -236,7 +240,7 @@ Copilot · Master Data · Settings. Each links to a stub page until its phase fi
 ## 9. Repo layout
 
 ```
-web/                 React SPA (Vercel)
+web/                 React SPA (Firebase Hosting)
   src/app/           shell: router, nav, layout, auth guard   (FROZEN after Phase 00)
   src/lib/           supabaseClient, queryClient, schemas, hooks (FROZEN core)
   src/components/ui/  shadcn components                        (FROZEN core)
@@ -317,3 +321,67 @@ Every phase wires observability; it is part of Definition of Done, not an aftert
 **Verify scripts (`scripts/verify/*.ts`):** print structured, greppable output —
 `[PHASE x] step … OK/FAIL` lines and a final `RESULT: PASS|FAIL`. This is the debugging surface when
 a phase gate fails.
+
+---
+
+## 13. Scope decisions (LOCKED — what we build vs defer)
+
+Decided after the deep-research review. The rule: **complete one loop end-to-end, flawlessly**, over
+completing every table. Everything below "Must" is required for the demo and the problem statement.
+
+**Must have (build, must be flawless):** roles/auth + RLS · master data (departments, categories,
+emission factors, product ESG profiles, goals, policies, badges, rewards) · carbon transactions
+(manual + auto-calc toggle) · environmental goals + dashboard · policies + acknowledgements + reminders ·
+audits + compliance issues (owner/due/overdue) + governance dashboard · CSR activities + participation
+(proof + approval + points) · diversity metrics · **scoring engine** (pillar → department → org, weighted,
+triggered) · challenges + XP + badges + **badge auto-award** + rewards + **reward redemption** +
+leaderboards · unified org **Dashboard** · standard **reports** (Env/Social/Gov/Summary) + export
+(PDF/CSV/XLSX) + simplified **custom report** (filter dropdowns, not drag-drop) · in-app **notifications**
+(realtime) · **AI**: grounded **Insights** (primary, deterministic-fallback) + **ESG Copilot**
+(function-calling over read-only SQL, differentiator, never-blank fallback) · **Settings** (weights +
+toggles).
+
+**Should have (build if core is green):** training completions (kept minimal — feeds social score, light
+UI) · email notifications via Resend (bonus, gated by `notify_email`) · AI executive summary on reports
+(gated) · department ESG ranking (folded into dashboard).
+
+**Deferred → `FUTURE_SCOPE.md`:** forecasting, RAG-over-policies, framework mapping (GRI/CSRD), anomaly
+detection, benchmarking, bespoke mobile layouts, native push/SMS. Each has an implementation plan there
+and a line on the roadmap slide.
+
+**AI de-risking:** Insights is the **must-have** AI surface because it is deterministic-grounded and
+cannot embarrass us; Copilot is the **should-have** wow factor with a hard grounding guardrail (§6.3) and
+a deterministic fallback so the panel never goes blank on stage. Both run `MOCK_AI=true` in all dev/test.
+
+## 14. Design language
+
+The product's look is **canonical in `docs/DESIGN.md`** ("Grounded Enterprise"): credible enterprise ESG,
+**no emojis, no neon/AI-gradient aesthetic, Lucide icons only**, evergreen/slate palette, data-first
+charts, numbers as hero. It is binding for every UI prompt. The baseline UI tokens are installed/overridden
+once by `prompts/baseline/b00_15_theme_and_design_system.md` (a baseline addendum, since tokens are a
+frozen shared file) and both tracks rebase onto it before building pages.
+
+## 15. System diagram
+
+```
+                         ┌─────────────────────────────────────────────┐
+                         │                  Browser (SPA)               │
+                         │   React + Vite + shadcn/ui  (Firebase Host)  │
+                         └───────┬───────────────────────────┬─────────┘
+                user JWT (RLS)   │                           │  user JWT
+              all CRUD / realtime│                           │  AI · email · AI-export
+                                 ▼                           ▼
+                    ┌────────────────────────┐   ┌──────────────────────────────┐
+                    │       SUPABASE         │   │      api/  (Hono, Cloud Run) │
+                    │  Postgres 16 + RLS     │   │  request-id · pino · /health │
+                    │  Auth · Storage        │◀──│  Gemini model router ────────┼─▶ Gemini / Gemma
+                    │  triggers · pg_cron    │   │  copilot SQL tools (RLS)     │      (multi-model pool)
+                    │  scoring fns · notify  │   │  Resend email (bonus)        │─▶ Resend
+                    └────────────────────────┘   │  ai_usage · ai_cache guard   │
+                       ▲   score triggers          └──────────────────────────────┘
+                       │   recompute dept + org
+        writes ────────┘   (carbon, csr, challenge, policy, audit, issue, …)
+
+  Deploy (agent via terminal/MCP): firebase deploy · gcloud run deploy · apply_migration
+```
+
