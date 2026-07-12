@@ -68,8 +68,80 @@ export const governanceApi = {
     return [];
   },
 
-  listAcknowledgements: async () => {
-    // Stub
-    return [];
+  myPendingAcks: async (userId: string) => {
+    const { data, error } = await supabaseClient
+      .from('policy_acknowledgements')
+      .select('*, esg_policies(*)')
+      .eq('employee_id', userId)
+      .eq('status', 'pending');
+    if (error) throw error;
+    return data;
+  },
+
+  acknowledge: async (policyId: string, userId: string) => {
+    const { data, error } = await supabaseClient
+      .from('policy_acknowledgements')
+      .update({
+        status: 'acknowledged',
+        acknowledged_at: new Date().toISOString()
+      })
+      .eq('policy_id', policyId)
+      .eq('employee_id', userId)
+      .eq('status', 'pending')
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  ackRateByPolicy: async () => {
+    const { data: acks, error: ackErr } = await supabaseClient
+      .from('policy_acknowledgements')
+      .select('policy_id, status, esg_policies(name)');
+    if (ackErr) throw ackErr;
+    
+    const stats: Record<string, { name: string; total: number; acked: number }> = {};
+    for (const ack of acks) {
+      const pid = ack.policy_id;
+      if (!pid) continue;
+      if (!stats[pid]) {
+        stats[pid] = { name: (ack.esg_policies as any)?.name || 'Unknown', total: 0, acked: 0 };
+      }
+      stats[pid].total++;
+      if (ack.status === 'acknowledged') stats[pid].acked++;
+    }
+    
+    return Object.values(stats).map(s => ({
+      name: s.name,
+      rate: s.total > 0 ? (s.acked / s.total) * 100 : 0,
+      total: s.total,
+      acked: s.acked
+    }));
+  },
+
+  ackRateByDepartment: async () => {
+    const { data: acks, error: ackErr } = await supabaseClient
+      .from('policy_acknowledgements')
+      .select('status, profiles!inner(department_id, departments(name))');
+    if (ackErr) throw ackErr;
+
+    const stats: Record<string, { name: string; total: number; acked: number }> = {};
+    for (const ack of acks) {
+      const p = ack.profiles as any;
+      const deptId = p?.department_id;
+      if (!deptId) continue;
+      if (!stats[deptId]) {
+        stats[deptId] = { name: p?.departments?.name || 'Unknown', total: 0, acked: 0 };
+      }
+      stats[deptId].total++;
+      if (ack.status === 'acknowledged') stats[deptId].acked++;
+    }
+
+    return Object.values(stats).map(s => ({
+      name: s.name,
+      rate: s.total > 0 ? (s.acked / s.total) * 100 : 0,
+      total: s.total,
+      acked: s.acked
+    }));
   }
 };

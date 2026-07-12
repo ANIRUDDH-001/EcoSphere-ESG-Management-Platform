@@ -48,3 +48,34 @@ export function useArchivePolicy() {
     }
   });
 }
+
+export function useMyAcks(userId: string) {
+  return useQuery({
+    queryKey: [...govKeys.acknowledgements, 'my', userId],
+    queryFn: () => governanceApi.myPendingAcks(userId),
+    enabled: !!userId
+  });
+}
+
+export function useAcknowledge() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ policyId, userId }: { policyId: string; userId: string }) => governanceApi.acknowledge(policyId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: govKeys.acknowledgements });
+    }
+  });
+}
+
+export function useAckRates() {
+  return useQuery({
+    queryKey: [...govKeys.acknowledgements, 'rates'],
+    queryFn: async () => {
+      const [byPolicy, byDept] = await Promise.all([
+        governanceApi.ackRateByPolicy(),
+        governanceApi.ackRateByDepartment()
+      ]);
+      return { byPolicy, byDept };
+    }
+  });
+}
