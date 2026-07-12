@@ -31,10 +31,29 @@ async function run() {
     const PERIOD = '2026-Q1';
 
     // 2. Fetch initial score (if exists)
-    const { data: initialScore } = await sb.from('department_scores')
+    let { data: initialScore } = await sb.from('department_scores')
       .select('social_score, updated_at')
       .eq('department_id', dept.id)
-      .single();
+      .maybeSingle();
+
+    let createdScoreRow = false;
+    if (!initialScore) {
+      const { error: insErr } = await sb.from('department_scores').insert({
+        department_id: dept.id,
+        environmental_score: 0,
+        social_score: 0,
+        governance_score: 0,
+        total_score: 0
+      });
+      if (!insErr) {
+        createdScoreRow = true;
+        const { data: newScore } = await sb.from('department_scores')
+          .select('social_score, updated_at')
+          .eq('department_id', dept.id)
+          .single();
+        initialScore = newScore;
+      }
+    }
 
     // 3. Upsert diversity metrics
     const { data: metric, error: upsertErr } = await sb.from('diversity_metrics')
@@ -76,6 +95,9 @@ async function run() {
     // ─── Cleanup ───
     if (metric) {
       await sb.from('diversity_metrics').delete().eq('id', metric.id);
+    }
+    if (createdScoreRow) {
+      await sb.from('department_scores').delete().eq('department_id', dept.id);
     }
 
   } catch (err: unknown) {
