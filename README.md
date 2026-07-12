@@ -46,9 +46,11 @@ deferred) is in `docs/ARCHITECTURE.md` §13; deferred features with plans in `do
 ## Local dev (once Phase 00 lands)
 ```
 pnpm install
-pnpm --filter web dev          # Vite dev server
+pnpm --filter web dev          # Vite dev server (Firebase Hosting in prod)
 pnpm --filter api dev          # Hono service (MOCK_AI=true for AI work)
 pnpm typecheck && pnpm build   # must be green before every push
 ```
+> Prod deploy is agent-driven from the terminal: `firebase deploy` (web) · `gcloud run deploy` (api) ·
+> Supabase migrations via MCP `apply_migration` (`prompts/integration/i_05`).
 > Secrets live only in Cloud Run env (Gemini/Resend/service role). `web` uses only `VITE_*`.
 > The Supabase connection is injected by the team before a build phase — never committed.
