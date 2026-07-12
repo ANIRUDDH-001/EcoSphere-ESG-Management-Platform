@@ -5,6 +5,7 @@ import { EsgTrendCard } from '../components/EsgTrendCard';
 import { DepartmentRankingCard } from '../components/DepartmentRankingCard';
 import { ParticipationTeaser } from '../components/ParticipationTeaser';
 import { LeaderboardTeaser } from '../components/LeaderboardTeaser';
+import { AiInsightBanner } from '../components/AiInsightBanner';
 
 export function DashboardPage() {
   const { orgScore, trend, isLoading, isError } = useDashboardData();
@@ -12,6 +13,7 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <div className="p-6 space-y-6 animate-pulse">
+        <div className="h-24 bg-slate-200 rounded-xl"></div>
         <div className="h-8 w-64 bg-slate-200 rounded"></div>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
           <div className="col-span-1 h-64 bg-slate-200 rounded"></div>
@@ -47,11 +49,13 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 max-w-7xl mx-auto">
       <header>
         <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
         <p className="text-slate-500 mt-1">Executive overview of ESG performance.</p>
       </header>
+
+      <AiInsightBanner />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Headline row: Overall Score + Pillars */}
