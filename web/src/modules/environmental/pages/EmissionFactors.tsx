@@ -26,7 +26,7 @@ export const EmissionFactors = () => {
   const [statusFilter, setStatusFilter] = useState<string>('active');
   const [sourceTypeFilter, setSourceTypeFilter] = useState<string>('all');
   
-  const { data: factors = [], isLoading } = useFactors(statusFilter === 'all' ? undefined : statusFilter);
+  const { data: factors = [] } = useFactors(statusFilter === 'all' ? undefined : statusFilter);
   const createMutation = useCreateFactor();
   const updateMutation = useUpdateFactor();
   const archiveMutation = useArchiveFactor();

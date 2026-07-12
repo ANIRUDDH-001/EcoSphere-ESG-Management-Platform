@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { emissionFactorSchema } from './schemas';
+import { emissionFactorSchema, productProfileSchema } from './schemas';
 
 describe('emissionFactorSchema', () => {
   it('accepts valid factor', () => {
@@ -40,5 +40,42 @@ describe('emissionFactorSchema', () => {
     if (!result.success) {
       expect(result.error.issues[0].message).toBe("valid_to must be on or after valid_from");
     }
+  });
+});
+
+describe('productProfileSchema', () => {
+  it('accepts a valid row with and without a factor link', () => {
+    let result = productProfileSchema.safeParse({
+      product_name: 'Product A',
+      carbon_per_unit: 10.5,
+      recyclable_pct: 100,
+      emission_factor_id: '1234-abcd'
+    });
+    expect(result.success).toBe(true);
+
+    result = productProfileSchema.safeParse({
+      product_name: 'Product B',
+      carbon_per_unit: 5.0,
+      recyclable_pct: 50
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects recyclable_pct 101', () => {
+    const result = productProfileSchema.safeParse({
+      product_name: 'Product A',
+      carbon_per_unit: 10.5,
+      recyclable_pct: 101
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects carbon_per_unit -1', () => {
+    const result = productProfileSchema.safeParse({
+      product_name: 'Product A',
+      carbon_per_unit: -1,
+      recyclable_pct: 100
+    });
+    expect(result.success).toBe(false);
   });
 });
