@@ -219,5 +219,21 @@ export const environmentalApi = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  getDepartmentEmissions: async () => {
+    // vw_department_emissions is not in generated types; use the anon table override
+    const { data, error } = await (supabaseClient as any)
+      .from('vw_department_emissions')
+      .select('*')
+      .order('total_co2e', { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as Array<{
+      department_id: string;
+      department_name: string | null;
+      employee_count: number;
+      total_co2e: number;
+      emissions_intensity: number;
+    }>;
   }
 };

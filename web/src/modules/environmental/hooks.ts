@@ -147,3 +147,10 @@ export const useDeleteCarbon = () => {
     }
   });
 };
+
+export const useDepartmentEmissions = () => {
+  return useQuery({
+    queryKey: envKeys.deptEmissions,
+    queryFn: () => environmentalApi.getDepartmentEmissions()
+  });
+};

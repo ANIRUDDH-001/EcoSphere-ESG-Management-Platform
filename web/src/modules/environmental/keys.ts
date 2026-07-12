@@ -4,4 +4,5 @@ export const envKeys = {
   products: ['env', 'products'] as const,
   goals: ['env', 'goals'] as const,
   carbon: (f: any) => ['env', 'carbon', f] as const,
+  deptEmissions: ['env', 'dept-emissions'] as const,
 };
