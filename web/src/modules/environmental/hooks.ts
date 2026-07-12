@@ -154,3 +154,19 @@ export const useDepartmentEmissions = () => {
     queryFn: () => environmentalApi.getDepartmentEmissions()
   });
 };
+
+export const useEnvDashboard = () => {
+  const { data: deptEms = [], isLoading: loadingEms } = useDepartmentEmissions();
+  const { data: carbonTxns = [], isLoading: loadingCarbon } = useCarbon();
+  const { data: goals = [], isLoading: loadingGoals } = useGoals();
+
+  const isLoading = loadingEms || loadingCarbon || loadingGoals;
+
+  return {
+    deptEms,
+    carbonTxns,
+    goals,
+    isLoading
+  };
+};
+

@@ -8,6 +8,15 @@ vi.mock('../lib/hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock('../modules/environmental/hooks', () => ({
+  useEnvDashboard: () => ({
+    deptEms: [],
+    carbonTxns: [],
+    goals: [],
+    isLoading: false
+  })
+}));
+
 describe('App Router', () => {
   afterEach(() => {
     cleanup();
@@ -41,8 +50,7 @@ describe('App Router', () => {
     render(<RouterProvider router={router} />);
     
     await waitFor(() => {
-      expect(screen.getAllByText('Environmental').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('coming soon').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Environmental Dashboard').length).toBeGreaterThan(0);
     });
   });
 
