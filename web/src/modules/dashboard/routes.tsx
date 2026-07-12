@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { DashboardPage } from './pages/DashboardPage';
 
 export const dashboardRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Dashboard" /> }
+  { index: true, element: <DashboardPage /> }
 ];

@@ -1,58 +1,21 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabaseClient } from '../../lib/supabaseClient';
+import { useOrgScore, useDepartmentScores, useScoreTrend } from '../../lib/hooks/scores';
 
 export function useDashboardData() {
-  const orgScoreQuery = useQuery({
-    queryKey: ['org_score'],
-    queryFn: async () => {
-      const { data, error } = await supabaseClient
-        .from('org_score_snapshots')
-        .select('*')
-        .order('snapshot_date', { ascending: false })
-        .limit(1)
-        .single();
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return { overall: 0, environmental: 0, social: 0, governance: 0 };
-      return {
-        overall: Number(data.overall_esg),
-        environmental: Number(data.environmental),
-        social: Number(data.social),
-        governance: Number(data.governance)
-      };
-    }
-  });
+  const { data: orgScore } = useOrgScore();
+  const { data: deptScores } = useDepartmentScores();
+  const { data: trend } = useScoreTrend(30);
 
-  const deptScoresQuery = useQuery({
-    queryKey: ['department_scores'],
-    queryFn: async () => {
-      const { data, error } = await supabaseClient.from('department_scores').select('*');
-      if (error) throw error;
-      return data ?? [];
-    }
-  });
+  // If data is undefined, it is loading
+  const isLoading = orgScore === undefined || deptScores === undefined || trend === undefined;
 
-  const trendQuery = useQuery({
-    queryKey: ['score_trend', 30],
-    queryFn: async () => {
-      const d = new Date();
-      d.setDate(d.getDate() - 30);
-      const pastDate = d.toISOString().split('T')[0];
-      const { data, error } = await supabaseClient
-        .from('org_score_snapshots')
-        .select('*')
-        .gte('snapshot_date', pastDate)
-        .order('snapshot_date', { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    }
-  });
+  // Errors from these hooks are thrown and caught by ErrorBoundaries
+  const isError = false; 
 
   return {
-    orgScore: orgScoreQuery.data,
-    deptScores: deptScoresQuery.data ?? [],
-    trend: trendQuery.data ?? [],
-    isLoading: orgScoreQuery.isLoading || deptScoresQuery.isLoading || trendQuery.isLoading,
-    isError: orgScoreQuery.isError || deptScoresQuery.isError
+    orgScore,
+    deptScores: deptScores ?? [],
+    trend: trend ?? [],
+    isLoading,
+    isError
   };
 }
-
