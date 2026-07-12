@@ -316,6 +316,17 @@ export async function fetchDepartments() {
   return data;
 }
 
+// ─── Profiles ─────────────────────────────────────────────────────────────────
+
+export async function fetchProfiles() {
+  const { data, error } = await supabaseClient
+    .from('profiles')
+    .select('id, full_name, email, role, department_id')
+    .order('full_name');
+  if (error) throw error;
+  return data;
+}
+
 // ─── ESG Settings (for evidence toggle) ──────────────────────────────────────
 
 export async function fetchEsgSettings() {

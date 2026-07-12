@@ -21,6 +21,7 @@ import {
   updateTrainingCompletion,
   deleteTrainingCompletion,
   fetchEsgSettings,
+  fetchProfiles,
 } from './api';
 
 // ─── Query Keys ───────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ export const socialKeys = {
   diversity: (deptId?: string) => ['diversity_metrics', deptId] as const,
   training: (deptId?: string) => ['training_completions', deptId] as const,
   esgSettings: ['esg_settings'] as const,
+  profiles: ['profiles'] as const,
 };
 
 // ─── CSR Activities ───────────────────────────────────────────────────────────
@@ -47,6 +49,10 @@ export function useCsrCategories() {
 
 export function useDepartments() {
   return useQuery({ queryKey: socialKeys.departments, queryFn: fetchDepartments });
+}
+
+export function useProfiles() {
+  return useQuery({ queryKey: socialKeys.profiles, queryFn: fetchProfiles });
 }
 
 export function useCreateCsrActivity() {
