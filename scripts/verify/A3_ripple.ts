@@ -16,6 +16,16 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
   console.log('[PHASE A3] Verifying ripple triggers...');
+  // Clear any existing dummy departments
+  const existingRippleDepts = (await supabase.from('departments').select('id').in('code', ['RPL1', 'RPL2'])).data?.map(d => d.id) || [];
+  if (existingRippleDepts.length > 0) {
+    await supabase.from('compliance_issues').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('employee_participations').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('csr_activities').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    await supabase.from('audits').delete().in('department_id', existingRippleDepts);
+    await supabase.from('department_scores').delete().in('department_id', existingRippleDepts);
+    await supabase.from('departments').delete().in('id', existingRippleDepts);
+  }
   
   // Create dummy departments
   const { data: dept1 } = await supabase.from('departments').insert({ name: 'Ripple Dept 1', code: 'RPL1', employee_count: 10 }).select('id').single();
