@@ -3,6 +3,8 @@ import { OverallScoreCard } from '../components/OverallScoreCard';
 import { PillarGauges } from '../components/PillarGauges';
 import { EsgTrendCard } from '../components/EsgTrendCard';
 import { DepartmentRankingCard } from '../components/DepartmentRankingCard';
+import { ParticipationTeaser } from '../components/ParticipationTeaser';
+import { LeaderboardTeaser } from '../components/LeaderboardTeaser';
 
 export function DashboardPage() {
   const { orgScore, trend, isLoading, isError } = useDashboardData();
@@ -68,6 +70,15 @@ export function DashboardPage() {
         {/* Ranking row */}
         <section className="col-span-1 xl:col-span-1">
           <DepartmentRankingCard />
+        </section>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section>
+          <ParticipationTeaser />
+        </section>
+        <section>
+          <LeaderboardTeaser />
         </section>
       </div>
     </div>
