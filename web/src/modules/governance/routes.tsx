@@ -1,9 +1,12 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { GovernanceDashboardPage } from './pages/GovernanceDashboardPage';
+import { PoliciesPage } from './pages/PoliciesPage';
+import { AuditsPage } from './pages/AuditsPage';
+import { CompliancePage } from './pages/CompliancePage';
 
 export const governanceRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Governance" /> },
-  { path: 'policies', element: <StubPage title="Policies" /> },
-  { path: 'audits', element: <StubPage title="Audits" /> },
-  { path: 'compliance', element: <StubPage title="Compliance" /> }
+  { index: true, element: <GovernanceDashboardPage /> },
+  { path: 'policies', element: <PoliciesPage /> },
+  { path: 'audits', element: <AuditsPage /> },
+  { path: 'compliance', element: <CompliancePage /> }
 ];
