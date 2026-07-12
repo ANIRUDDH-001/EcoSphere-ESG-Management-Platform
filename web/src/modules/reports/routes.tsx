@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { ReportsPage } from './pages/ReportsPage';
 
 export const reportsRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Reports" /> }
+  { index: true, element: <ReportsPage /> }
 ];

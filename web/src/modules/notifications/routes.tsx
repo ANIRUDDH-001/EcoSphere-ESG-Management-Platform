@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { NotificationsPage } from './pages/NotificationsPage';
 
 export const notificationsRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Notifications" /> }
+  { index: true, element: <NotificationsPage /> }
 ];
