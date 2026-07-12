@@ -20,7 +20,7 @@ describe('Model Pools', () => {
   });
 
   it('should have the primary copilot model with the highest RPD in its pool', () => {
-    const primary = COPILOT_POOL[0];
+    const primary = COPILOT_POOL[0]!;
     const maxRpd = Math.max(...COPILOT_POOL.map(m => m.rpd));
     expect(primary.rpd).toBe(maxRpd);
   });

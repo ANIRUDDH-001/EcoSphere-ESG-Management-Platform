@@ -80,7 +80,7 @@ export async function buildScoreSnapshot(db: SupabaseClient, scope: 'org' | { de
     { name: 'Governance', score: scores.governance }
   ];
   pillars.sort((a, b) => a.score - b.score);
-  const lowestPillar = pillars[0].name;
+  const lowestPillar = pillars[0]!.name;
 
   return {
     scope: scope === 'org' ? 'Organization' : 'Department',

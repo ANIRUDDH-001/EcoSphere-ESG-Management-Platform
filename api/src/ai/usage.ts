@@ -67,7 +67,7 @@ export async function recordUsage(userId: string, model: string, kind: 'copilot'
     user_id: userId,
     model,
     kind
-  });
+  } as any);
   if (error) {
     logger.error({ err: error, user_id: userId, model, kind }, "Failed to record AI usage");
   }

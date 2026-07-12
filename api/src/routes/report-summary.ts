@@ -13,8 +13,8 @@ function buildFallbackTemplate(payload: any) {
   const keys = Object.keys(metrics);
   if (keys.length === 0) return 'Report summarized.';
   
-  const m1 = keys[0];
-  const m2 = keys[1];
+  const m1 = keys[0] ?? '';
+  const m2 = keys[1] ?? '';
   
   if (keys.length === 1) {
     return `${payload.title} shows ${m1} at ${metrics[m1]}.`;
