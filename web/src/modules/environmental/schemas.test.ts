@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { emissionFactorSchema, productProfileSchema, goalSchema } from './schemas';
+import { emissionFactorSchema, productProfileSchema, goalSchema, carbonTxnSchema } from './schemas';
 
 describe('emissionFactorSchema', () => {
   it('accepts valid factor', () => {
@@ -101,5 +101,39 @@ describe('goalSchema', () => {
       target_date: '2030-01-01'
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe('carbonTxnSchema', () => {
+  const base = {
+    date: '2025-01-01',
+    source_type: 'manual' as const,
+    quantity: 10,
+    emission_factor_id: 'factor-uuid'
+  };
+
+  it('accepts a valid transaction', () => {
+    const result = carbonTxnSchema.safeParse(base);
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects quantity = 0', () => {
+    const result = carbonTxnSchema.safeParse({ ...base, quantity: 0 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects negative quantity', () => {
+    const result = carbonTxnSchema.safeParse({ ...base, quantity: -5 });
+    expect(result.success).toBe(false);
+  });
+
+  it('requires emission_factor_id', () => {
+    const result = carbonTxnSchema.safeParse({ ...base, emission_factor_id: '' });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts optional department_id and note', () => {
+    const result = carbonTxnSchema.safeParse({ ...base, department_id: 'dept-uuid', note: 'test' });
+    expect(result.success).toBe(true);
   });
 });

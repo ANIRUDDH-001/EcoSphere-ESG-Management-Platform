@@ -1,7 +1,8 @@
 import { supabaseClient } from '../../lib/supabaseClient';
 import type { Database } from '../../types/database';
-import type { EmissionFactorFormValues } from './schemas';
+import type { EmissionFactorFormValues, CarbonTxnFormValues } from './schemas';
 import { computeGoalStatus } from './utils';
+import { computeCo2e } from '../../lib/emissions';
 
 type EmissionFactorRow = Database['public']['Tables']['emission_factors']['Row'];
 
@@ -168,5 +169,55 @@ export const environmentalApi = {
       return data;
     }
     return goal;
+  },
+
+  listCarbon: async (filter?: { department_id?: string; source_type?: string; date_from?: string; date_to?: string }) => {
+    let query = supabaseClient
+      .from('carbon_transactions')
+      .select(`*, departments(name), emission_factors(name, unit)`)
+      .order('date', { ascending: false });
+
+    if (filter?.department_id) query = query.eq('department_id', filter.department_id);
+    if (filter?.source_type) query = query.eq('source_type', filter.source_type as Database['public']['Enums']['source_type']);
+    if (filter?.date_from) query = query.gte('date', filter.date_from);
+    if (filter?.date_to) query = query.lte('date', filter.date_to);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
+  },
+
+  createCarbon: async (input: CarbonTxnFormValues) => {
+    // Fetch the factor to recompute co2e server-side (source of truth)
+    const { data: factor, error: factorError } = await supabaseClient
+      .from('emission_factors')
+      .select('factor_kgco2e')
+      .eq('id', input.emission_factor_id)
+      .single();
+    if (factorError) throw factorError;
+
+    const co2e = computeCo2e(input.quantity, factor.factor_kgco2e ?? 0);
+
+    const { data, error } = await supabaseClient
+      .from('carbon_transactions')
+      .insert({
+        ...input,
+        department_id: input.department_id || null,
+        co2e,
+        is_auto: false,
+        source_type: input.source_type as any
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  deleteCarbon: async (id: string) => {
+    const { error } = await supabaseClient
+      .from('carbon_transactions')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
   }
 };

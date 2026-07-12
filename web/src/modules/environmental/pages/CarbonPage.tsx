@@ -1,5 +1,5 @@
-import { StubPage } from '../../../components/StubPage';
+import { CarbonTransactions } from './CarbonTransactions';
 
 export const CarbonPage = () => {
-  return <StubPage title="Carbon" />;
+  return <CarbonTransactions />;
 };

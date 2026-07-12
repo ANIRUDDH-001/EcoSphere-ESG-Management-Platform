@@ -42,3 +42,14 @@ export const goalSchema = z.object({
 });
 
 export type GoalFormValues = z.input<typeof goalSchema>;
+
+export const carbonTxnSchema = z.object({
+  date: z.string().min(1, 'Date is required'),
+  department_id: z.string().nullable().optional(),
+  source_type: z.enum(['purchase', 'manufacturing', 'expense', 'fleet', 'energy', 'manual']),
+  quantity: z.number().positive('Quantity must be greater than 0'),
+  emission_factor_id: z.string().min(1, 'Emission factor is required'),
+  note: z.string().optional()
+});
+
+export type CarbonTxnFormValues = z.infer<typeof carbonTxnSchema>;

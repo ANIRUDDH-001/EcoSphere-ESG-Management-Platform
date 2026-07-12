@@ -113,3 +113,37 @@ export const useDeleteGoal = () => {
     }
   });
 };
+
+export interface CarbonFilter {
+  department_id?: string;
+  source_type?: string;
+  date_from?: string;
+  date_to?: string;
+}
+
+export const useCarbon = (filter?: CarbonFilter) => {
+  return useQuery({
+    queryKey: envKeys.carbon(filter),
+    queryFn: () => environmentalApi.listCarbon(filter)
+  });
+};
+
+export const useCreateCarbon = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: any) => environmentalApi.createCarbon(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['env', 'carbon'] });
+    }
+  });
+};
+
+export const useDeleteCarbon = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => environmentalApi.deleteCarbon(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['env', 'carbon'] });
+    }
+  });
+};
