@@ -33,7 +33,7 @@ export const gamificationKeys = {
   allRedemptions: ['all_redemptions'] as const,
   badges: ['badges'] as const,
   myBadgeAwards: (userId?: string) => ['my_badge_awards', userId] as const,
-  leaderboard: ['leaderboard'] as const,
+  leaderboard: (limit?: number) => ['leaderboard', limit] as const,
   categories: ['challenge_categories'] as const,
 };
 
@@ -122,7 +122,7 @@ export function useApproveChallengeParticipation() {
       approveChallengeParticipation(id, reviewerId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: gamificationKeys.allParticipations });
-      qc.invalidateQueries({ queryKey: gamificationKeys.leaderboard });
+      qc.invalidateQueries({ queryKey: gamificationKeys.leaderboard() });
     },
   });
 }
@@ -220,8 +220,8 @@ export function useMyBadgeAwards(userId: string | undefined) {
 
 // ─── Leaderboard ─────────────────────────────────────────────────────────────
 
-export function useLeaderboard() {
-  return useQuery({ queryKey: gamificationKeys.leaderboard, queryFn: fetchLeaderboard });
+export function useLeaderboard(limit?: number) {
+  return useQuery({ queryKey: gamificationKeys.leaderboard(limit), queryFn: () => fetchLeaderboard(limit) });
 }
 
 // ─── Categories ──────────────────────────────────────────────────────────────

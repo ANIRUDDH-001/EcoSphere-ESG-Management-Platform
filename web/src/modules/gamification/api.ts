@@ -270,12 +270,12 @@ export async function fetchMyBadgeAwards(employeeId: string) {
 
 // ─── Leaderboard ─────────────────────────────────────────────────────────────
 
-export async function fetchLeaderboard() {
+export async function fetchLeaderboard(limit: number = 100) {
   const { data, error } = await supabaseClient
     .from('profiles')
     .select('id, full_name, email, xp, points_balance, department_id, department:departments(name)')
     .order('xp', { ascending: false })
-    .limit(100);
+    .limit(limit);
   if (error) throw error;
   return data;
 }

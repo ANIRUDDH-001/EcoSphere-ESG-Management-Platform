@@ -15,3 +15,22 @@ export interface ParticipationSummary {
 
 export function useParticipationSummary(): UseQueryResult<ParticipationSummary, Error>;
 ```
+
+## useLeaderboard
+Consumed by: Track A Org Dashboard (`web/src/modules/dashboard`)
+Published by: Track B Gamification (`web/src/modules/gamification/hooks.ts`)
+
+### Type Signature
+```typescript
+export interface LeaderboardEntry {
+  id: string;
+  full_name: string;
+  email: string;
+  xp: number;
+  points_balance: number;
+  department_id: string | null;
+  department?: { name: string } | null;
+}
+
+export function useLeaderboard(limit?: number): UseQueryResult<LeaderboardEntry[], Error>;
+```
