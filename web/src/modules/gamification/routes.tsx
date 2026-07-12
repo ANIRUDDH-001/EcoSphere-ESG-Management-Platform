@@ -1,10 +1,14 @@
 import type { RouteObject } from 'react-router-dom';
-import { StubPage } from '../../components/StubPage';
+import { GamificationDashboard } from './pages/GamificationDashboard';
+import { ChallengesPage } from './pages/ChallengesPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
+import { RewardsPage } from './pages/RewardsPage';
+import { BadgesPage } from './pages/BadgesPage';
 
 export const gamificationRoutes: RouteObject[] = [
-  { index: true, element: <StubPage title="Gamification" /> },
-  { path: 'challenges', element: <StubPage title="Challenges" /> },
-  { path: 'leaderboard', element: <StubPage title="Leaderboard" /> },
-  { path: 'rewards', element: <StubPage title="Rewards" /> },
-  { path: 'badges', element: <StubPage title="Badges" /> }
+  { index: true, element: <GamificationDashboard /> },
+  { path: 'challenges', element: <ChallengesPage /> },
+  { path: 'leaderboard', element: <LeaderboardPage /> },
+  { path: 'rewards', element: <RewardsPage /> },
+  { path: 'badges', element: <BadgesPage /> }
 ];
