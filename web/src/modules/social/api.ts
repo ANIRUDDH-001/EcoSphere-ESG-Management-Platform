@@ -221,6 +221,26 @@ export async function fetchParticipationSummary(): Promise<ParticipationSummary>
   return { participationRate, approvedCount: uniqueEmployees, totalEmployees, recentByDept };
 }
 
+export async function fetchParticipationTrend() {
+  const { data, error } = await supabaseClient
+    .from('employee_participations')
+    .select('completion_date')
+    .eq('approval_status', 'approved')
+    .order('completion_date');
+  if (error) throw error;
+
+  const counts: Record<string, number> = {};
+  for (const p of data ?? []) {
+    const d = p.completion_date || new Date().toISOString().split('T')[0];
+    counts[d] = (counts[d] ?? 0) + 1;
+  }
+
+  return Object.keys(counts).sort().map(date => ({
+    date,
+    count: counts[date]
+  }));
+}
+
 // ─── Diversity Metrics ────────────────────────────────────────────────────────
 
 export async function fetchDiversityMetrics(departmentId?: string) {

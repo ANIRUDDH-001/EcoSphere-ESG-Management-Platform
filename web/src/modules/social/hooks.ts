@@ -13,6 +13,7 @@ import {
   approveParticipation,
   rejectParticipation,
   fetchParticipationSummary,
+  fetchParticipationTrend,
   fetchDiversityMetrics,
   upsertDiversityMetric,
   deleteDiversityMetric,
@@ -32,6 +33,7 @@ export const socialKeys = {
   participations: (userId?: string) => ['participations', userId] as const,
   allParticipations: ['all_participations'] as const,
   participationSummary: ['participation_summary'] as const,
+  participationTrend: ['participation_trend'] as const,
   diversity: (deptId?: string) => ['diversity_metrics', deptId] as const,
   training: (deptId?: string) => ['training_completions', deptId] as const,
   esgSettings: ['esg_settings'] as const,
@@ -124,6 +126,7 @@ export function useApproveParticipation() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: socialKeys.allParticipations });
       qc.invalidateQueries({ queryKey: socialKeys.participationSummary });
+      qc.invalidateQueries({ queryKey: socialKeys.participationTrend });
     },
   });
 }
@@ -134,12 +137,17 @@ export function useRejectParticipation() {
     mutationFn: ({ id, reviewerId }: { id: string; reviewerId: string }) => rejectParticipation(id, reviewerId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: socialKeys.allParticipations });
+      qc.invalidateQueries({ queryKey: socialKeys.participationTrend });
     },
   });
 }
 
 export function useParticipationSummary() {
   return useQuery({ queryKey: socialKeys.participationSummary, queryFn: fetchParticipationSummary });
+}
+
+export function useParticipationTrend() {
+  return useQuery({ queryKey: socialKeys.participationTrend, queryFn: fetchParticipationTrend });
 }
 
 // ─── Diversity Metrics ────────────────────────────────────────────────────────

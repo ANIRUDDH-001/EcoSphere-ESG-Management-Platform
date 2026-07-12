@@ -1,8 +1,9 @@
-import { Users, TrendingUp, BarChart3, UserCheck } from 'lucide-react';
-import { useParticipationSummary, useDiversityMetrics, useTrainingCompletions } from '../hooks';
+import { Users, TrendingUp, BarChart3, UserCheck, Calendar } from 'lucide-react';
+import { useParticipationSummary, useParticipationTrend, useDiversityMetrics, useTrainingCompletions } from '../hooks';
 import { StatTile } from '@/components/shared/StatTile';
 import { ChartCard } from '@/components/shared/ChartCard';
 import { RankBar } from '@/components/shared/RankBar';
+import { TrendLine } from '@/components/shared/TrendLine';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,6 +14,7 @@ export function SocialDashboard() {
   const deptId = profile?.role === 'manager' ? (profile.department_id ?? undefined) : undefined;
 
   const { data: summary, isLoading: sumLoading, error: sumError } = useParticipationSummary();
+  const { data: trend, isLoading: trendLoading } = useParticipationTrend();
   const { data: diversity, isLoading: divLoading } = useDiversityMetrics(deptId);
   const { data: training, isLoading: trainLoading } = useTrainingCompletions(deptId);
 
@@ -80,8 +82,21 @@ export function SocialDashboard() {
         )}
       </div>
 
-      {/* Participation ranking */}
+      {/* Charts and Lists */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <ChartCard title="Participation Trend" description="Approved CSR participations count over time">
+          {trendLoading ? (
+            <Skeleton className="h-full w-full" />
+          ) : !trend || trend.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full gap-2 text-muted-foreground">
+              <Calendar size={32} />
+              <p className="text-sm">No trend data yet. Approve participations to see the trend.</p>
+            </div>
+          ) : (
+            <TrendLine data={trend} dataKey="count" xAxisKey="date" />
+          )}
+        </ChartCard>
+
         <ChartCard title="Participation by Department" description="Approved CSR participations per department">
           {sumLoading ? (
             <Skeleton className="h-full w-full" />
